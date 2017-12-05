@@ -21,5 +21,8 @@ def multiplier_of(n):
 three = multiplier_of(3)
 five = multiplier_of(5)
 
+a = multiplier_of(3).__closure__[0]
+b = multiplier_of(5).__closure__[0]
+print a.cell_contents
 print three(5)
 print five(7)
