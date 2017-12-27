@@ -45,6 +45,7 @@ class TicTacToeController(Controller):
             for j in i:
                 stri += str(j) + " "
             print stri
+
     @staticmethod
     def print_space():
         """display 3 spaces"""
@@ -60,8 +61,8 @@ class TicTacToeController(Controller):
         winning_moves = []
         for i in range(1, 9, 3):
             winning_moves.append(range(i, i+3))
-        for i in range(1,4):
-            winning_moves.append(range(i,i+7,3))
+        for i in range(1, 4):
+            winning_moves.append(range(i, i+7, 3))
         winning_moves.append([1, 5, 9])
         winning_moves.append([3, 5, 7])
         for move in winning_moves:
@@ -80,7 +81,7 @@ class TicTacToeController(Controller):
         return False, player
 
     def is_valid_move(self, m):
-        if m < 1 and m > 9:
+        if m < 1 or m > 9:
             print "Wrong input"
             return -1
         if m in self.player_one.moves or m in self.player_two.moves:
