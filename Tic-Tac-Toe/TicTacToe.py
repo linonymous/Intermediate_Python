@@ -13,8 +13,11 @@ class TicTacToeController(Controller):
         self.logging.info("TicTacToe controller initiated")
         self.matrix = []
         self.board = []
-        for i in range(1, 9):
-            self.board[i] = '_'
+        for i in range(3):
+            a = []
+            for i in range(3):
+                a.append('_')
+            self.board.append(a)
 
         for i in range(1,9,3):
             self.matrix.append(range(i, i+3))
@@ -56,6 +59,13 @@ class TicTacToeController(Controller):
             for j in i:
                 stri += str(j) + " "
             print stri
+
+    def display_board(self):
+        self.logging.debug(str(self.board))
+        for i in range(3):
+            for j in range(3):
+                print self.board[i][j],
+            print
 
     @staticmethod
     def print_space():
@@ -169,6 +179,37 @@ class TicTacToeController(Controller):
 
         return best_row, best_col
 
+    def check(self, player):
+        if player == 2:
+            ch = 'X'
+        else:
+            ch = 'O'
+        for i in self.board:
+            s = set(i)
+            if '_' in s:
+                break
+            if len(s) == 1 and ch in s:
+                print "Congratulations! player " + str(player) + " has won the match!"
+                return True,player
+        k = self.board
+        for i in range(3):
+            for j in range(3):
+                k[j][i] = self.board[i][j]
+        for i in k:
+            s = set(i)
+            if '_' in s:
+                break
+            if len(s) == 1 and ch in s:
+                print "Congratulations! player " + str(player) + " has won the match!"
+                return True,player
+        if self.board[2][2] != '_':
+            if self.board[0][1] == self.board[1][1] and self.board[1][1] == self.board[2][2]:
+                print "Congratulations! player " + str(player) + " has won the match!"
+                return True,player
+            if self.board[0][2] == self.board[1][1] and self.board[1][1] == self.board[2][0]:
+                print "Congratulations! player " + str(player) + " has won the match!"
+                return True,player
+        return -1, None
 
     def _play_bot(self):
         print "Lets start the game..."
@@ -176,36 +217,34 @@ class TicTacToeController(Controller):
         flg = 1
         while True:
             self.print_space()
-            self.display_matrix()
+            self.display_board()
             self.print_space()
             if players[flg-1] == "--JARVIS--":
-                m = self.find_best_move()
+                m, n = self.find_best_move()
             else:
-                print "Enter move for player " + str(players[flg-1])
-                m = int(raw_input())
-            ret = self.is_valid_move(m)
-            if ret == -1:
+                print "Enter move for player " + str(players[flg-1]) + "row and column"
+                m = int(raw_input("row:"))
+                n = int(raw_input("col:"))
+            print "Next Move " + str(m) + " " + str(n)
+            if m < 0 or m > 3:
+                print "Invalid Move!"
                 continue
-            elif ret == -2:
+            if n < 0 or n > 3:
+                print "Invalid Move!"
+                continue
+            if self.board[m][n] != '_':
                 print "Invalid Move, already played.."
                 continue
             if flg == 1:
-                self.player_one.make_move(m)
                 flg = 2
             else:
-                self.player_two.make_move(m)
                 flg = 1
             if flg == 2:
                 ch = "X"
             else:
                 ch = "O"
-            m -= 1
-            for i in self.matrix:
-                if (m + 1) in i:
-                    m = m % 3
-                    i.pop(m)
-                    i.insert(m, ch)
-            ret, player = self.win(1 if flg == 2 else 2)
+            self.board[m][n] = ch
+            ret, player = self.check(1 if flg == 2 else 2)
             if ret is True:
                 print " Congratulations! Player " + str(player) + " have won the match!"
                 break
