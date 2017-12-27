@@ -197,11 +197,13 @@ class TicTacToeController(Controller):
             if len(s) == 1 and ch in s:
                 print "Congratulations! player " + str(player) + " has won the match!"
                 return True,player
-        k = self.board
+
         for i in range(3):
             for j in range(3):
-                k[j][i] = self.board[i][j]
-        for i in k:
+                tmp = self.board[i][j]
+                self.board[i][j] = self.board[j][i]
+                self.board[j][i] = tmp
+        for i in self.board:
             s = set(i)
             if '_' in s:
                 break
@@ -215,6 +217,11 @@ class TicTacToeController(Controller):
             if self.board[0][2] == self.board[1][1] and self.board[1][1] == self.board[2][0]:
                 print "Congratulations! player " + str(player) + " has won the match!"
                 return True,player
+        for i in range(3):
+            for j in range(3):
+                tmp = self.board[i][j]
+                self.board[i][j] = self.board[j][i]
+                self.board[j][i] = tmp
         return -1, None
 
     def _play_bot(self):
@@ -245,12 +252,14 @@ class TicTacToeController(Controller):
                 ch = "X"
             else:
                 ch = "O"
+            self.board[m][n] = ch
+            ret, player = self.check(flg)
             if flg == 1:
                 flg = 2
             else:
                 flg = 1
-            self.board[m][n] = ch
-            ret, player = self.check(1 if flg == 2 else 2)
+            print("here.....")
+            self.display_board()
             if ret is True:
                 print " Congratulations! Player " + str(player) + " have won the match!"
                 break
