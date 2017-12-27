@@ -131,8 +131,8 @@ class TicTacToeController(Controller):
             best = -1000
 
             #Traverse all the cells
-            for i in range(0,3,1):
-                for j in range(0,3,1):
+            for i in range(0, 3, 1):
+                for j in range(0, 3, 1):
                     if self.board[i][j] == '_':
 
                         #make the move
@@ -140,6 +140,9 @@ class TicTacToeController(Controller):
 
                         #Call min_max recursively and find out the maximun value
                         best = max(best, self.min_max(depth + 1, not(isMax)))
+
+                        #Undo the move
+                        self.board[i][j] = '_'
             return best
         else:
             best = 1000
@@ -153,6 +156,9 @@ class TicTacToeController(Controller):
 
                         # Call min_max recursively and find out the minimum value
                         best = min(best, self.min_max(depth + 1, not (isMax)))
+
+                        # Undo the move
+                        self.board[i][j] = '_'
             return best
 
     def find_best_move(self):
@@ -177,7 +183,7 @@ class TicTacToeController(Controller):
                         best_row = i
                         best_col = j
 
-        return best_row, best_col
+        return (3*(best_row) + best_col + 1)
 
     def check(self, player):
         if player == 2:
