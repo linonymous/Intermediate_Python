@@ -13,10 +13,9 @@ class TicTacToeController(Controller):
         self.logging.info("TicTacToe controller initiated")
         self.matrix = []
         self.board = []
-        for i in range(1, 9):
-            self.board[i] = '_'
-
-        for i in range(1,9,3):
+        for i in range(0, 9):
+            self.board.append('_')
+        for i in range(1, 9, 3):
             self.matrix.append(range(i, i+3))
         self.logging.info("matrix has been built")
         self.logging.info(str(self.matrix))
@@ -167,7 +166,7 @@ class TicTacToeController(Controller):
                         best_row = i
                         best_col = j
 
-        return best_row, best_col
+        return (3*(best_row) + best_col + 1)
 
 
     def _play_bot(self):
