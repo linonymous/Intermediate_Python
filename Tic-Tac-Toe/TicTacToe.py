@@ -1,7 +1,8 @@
 import sys
-sys.path.append("C:\Users\Swapnil.Walke\Intermediate_Python\Tic-Tac-Toe")
 from controller import Controller
 from player import Player
+sys.path.append("C:\Users\Swapnil.Walke\Intermediate_Python\Tic-Tac-Toe")
+
 
 class TicTacToeController(Controller):
 
@@ -15,7 +16,6 @@ class TicTacToeController(Controller):
             self.matrix.append(range(i, i+3))
         self.logging.info("matrix has been built")
         self.logging.info(str(self.matrix))
-
 
     def _pre_play(self):
         print "Welcome to tic tac toe"
@@ -37,7 +37,6 @@ class TicTacToeController(Controller):
             self.player_one = Player(player_one)
             self.player_two = Player(player_two)
 
-
     def display_matrix(self):
         """display the matrix"""
         self.logging.debug(str(self.matrix))
@@ -46,27 +45,20 @@ class TicTacToeController(Controller):
             for j in i:
                 stri += str(j) + " "
             print stri
-
-
-    def print_space(self):
+    @staticmethod
+    def print_space():
         """display 3 spaces"""
         for i in range(3):
             print ""
 
-
     def win(self, player):
         """check the winning condition or check the draw condition"""
-        if len(self.player_one.moves) + len(self.player_two.moves) == 9:
-            print " Games is drawn"
-            self.logging.debug("Game is draw, nobody won")
-            self.logging.debug("Enjoy the game again :)")
-            sys.exit(100)
         if player == 1:
             a = self.player_one.moves
         else:
             a = self.player_two.moves
         winning_moves = []
-        for i in range(1,9,3):
+        for i in range(1, 9, 3):
             winning_moves.append(range(i, i+3))
         for i in range(1,4):
             winning_moves.append(range(i,i+7,3))
@@ -80,8 +72,19 @@ class TicTacToeController(Controller):
                     break
             if flg:
                 return True, player
+        if len(self.player_one.moves) + len(self.player_two.moves) == 9:
+            print " Games is drawn"
+            self.logging.debug("Game is draw, nobody won")
+            self.logging.debug("Enjoy the game again :)")
+            sys.exit(100)
         return False, player
 
+    def is_valid_move(self, m):
+        if m < 1 and m > 9:
+            print "Wrong input"
+            return -1
+        if m in self.player_one.moves or m in self.player_two.moves:
+            return  -2
 
     def _play(self):
         print "Lets start the game"
@@ -92,8 +95,12 @@ class TicTacToeController(Controller):
             self.print_space()
             print "Enter move for player " + str(flg)
             m = int(raw_input())
-            if m < 1 and m > 9:
-                print "Wrong input"
+
+            ret = self.is_valid_move(m)
+            if ret == -1:
+                continue
+            elif ret == -2:
+                print "Invalid Move, already played.."
                 continue
             if flg == 1:
                 self.player_one.make_move(m)
@@ -105,22 +112,20 @@ class TicTacToeController(Controller):
                 ch = "X"
             else:
                 ch = "O"
-            m-=1
+            m -= 1
             for i in self.matrix:
                 if (m+1) in i:
                     m = m % 3
                     i.pop(m)
                     i.insert(m, ch)
             ret, player = self.win(1 if flg == 2 else 2)
-            if ret == True:
+            if ret is True:
                 print " Congratulations! Player " + str(player) + " have won the match!"
                 break
-
 
     def initiate(self):
         self._pre_play()
         self._play()
-
 
 
 game = TicTacToeController()
