@@ -22,9 +22,15 @@ class TicTacToeController(Controller):
         print "Enter number of players"
         a = int(raw_input())
         if a == 1:
-            self.logging.debug("One player game is unsupported")
-            print "Sorry! Our bot is under development, wait patiently till we get done with our bot. Thanks!"
-            sys.exit(100)
+            self.logging.info("One player game has been started....")
+            print "Welcome to the game"
+            print "Enter the name of player one:"
+            player_one = raw_input()
+            self.player_one = Player(player_one)
+            print "Welcome " + player_one + "!! you will play against JARVIS!"
+            self.player_two = Player("--JARVIS--")
+            self.logging.info(str(self.player_one) + " is playing against " + str(self.player_two))
+            self._play_bot()
         if a == 2:
             self.logging.debug("Two player game has been started....")
             print "Welcome to the game"
@@ -36,6 +42,7 @@ class TicTacToeController(Controller):
             self.logging.debug("player " + player_one + " and " + " player " + player_two + " has started playing...")
             self.player_one = Player(player_one)
             self.player_two = Player(player_two)
+            self._play()
 
     def display_matrix(self):
         """display the matrix"""
@@ -87,6 +94,46 @@ class TicTacToeController(Controller):
         if m in self.player_one.moves or m in self.player_two.moves:
             return  -2
 
+    def _play_bot(self):
+        print "Lets start the game..."
+        players = [self.player_one.name, self.player_two.name]
+        flg = 1
+        while True:
+            self.print_space()
+            self.display_matrix()
+            self.print_space()
+            if players[flg-1] == "--JARVIS--":
+                m = self.find_best_move()
+            else:
+                print "Enter move for player " + str(players[flg-1])
+                m = int(raw_input())
+            ret = self.is_valid_move(m)
+            if ret == -1:
+                continue
+            elif ret == -2:
+                print "Invalid Move, already played.."
+                continue
+            if flg == 1:
+                self.player_one.make_move(m)
+                flg = 2
+            else:
+                self.player_two.make_move(m)
+                flg = 1
+            if flg == 2:
+                ch = "X"
+            else:
+                ch = "O"
+            m -= 1
+            for i in self.matrix:
+                if (m + 1) in i:
+                    m = m % 3
+                    i.pop(m)
+                    i.insert(m, ch)
+            ret, player = self.win(1 if flg == 2 else 2)
+            if ret is True:
+                print " Congratulations! Player " + str(player) + " have won the match!"
+                break
+
     def _play(self):
         print "Lets start the game"
         flg = 1
@@ -126,7 +173,6 @@ class TicTacToeController(Controller):
 
     def initiate(self):
         self._pre_play()
-        self._play()
 
 
 game = TicTacToeController()
