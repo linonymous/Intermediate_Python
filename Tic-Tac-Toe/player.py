@@ -1,6 +1,7 @@
 import sys
-sys.path.append("C:\Users\Swapnil.Walke\Intermediate_Python\Tic-Tac-Toe")
 from person import Person
+sys.path.append("C:\Users\Swapnil.Walke\Intermediate_Python\Tic-Tac-Toe")
+
 
 class Player(Person):
 

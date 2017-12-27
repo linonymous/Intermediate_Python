@@ -3,7 +3,7 @@ class Controller:
 
     def __init__(self, log_file):
         self.file_name = log_file
-        logging.basicConfig(filename=log_file,level=logging.DEBUG)
+        logging.basicConfig(filename=log_file, level=logging.DEBUG)
         self.logging = logging.getLogger()
         logging.info("Controller initiated")
 
