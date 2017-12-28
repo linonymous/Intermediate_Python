@@ -1,4 +1,5 @@
 import sys
+import copy
 from controller import Controller
 from player import Player
 sys.path.append("C:\Users\Swapnil.Walke\Intermediate_Python\Tic-Tac-Toe")
@@ -108,41 +109,70 @@ class TicTacToeController(Controller):
         if m in self.player_one.moves or m in self.player_two.moves:
             return -2
 
-    def min_max(self, depth, isMax):
-
-        #Check which player has won and return score accordingly
-        ret, player = self.win(1)
-        if ret == True:
-            print"Congratulations, player 1 has won!!"
-            return -10
-
-        #If no moves left, return score to be 0
-        if ret == False:
+    def evaluate(self, board):
+        flg = 0
+        # check for rows
+        for i in board:
+            if '_' not in i:
+                s = set(i)
+                if len(s) == 1 and 'X' in s:
+                    return 10
+                elif len(s) == 1 and 'O' in s:
+                    return -10
+            else:
+                flg = 1
+        if flg == 0:
             return 0
+        # check for columns
+        for i in range(3):
+            a = []
+            for j in range(3):
+                a.append(board[j][i])
+            if '_' not in a:
+                s = set(a)
+                if len(s) == 1 and 'X' in s:
+                    return 10
+                elif len(s) == 1 and 'O' in s:
+                    return -10
+        # check for diagonals
+        if board[1][1] != '_':
+            if board[0][0] == board[1][1] and board[1][1] == board[2][2]:
+                # print "Congratulations! player " + str(player) + " has won the match!"
+                if board[1][1] == 'X':
+                    return 10
+                else:
+                    return -10
+            if board[0][2] == board[1][1] and board[1][1] == board[2][0]:
+                # print "Congratulations! player " + str(player) + " has won the match!"
+                if board[1][1] == 'X':
+                    return 10
+                else:
+                    return -10
 
-        #This is Our player bot, and it is maximizer
-        ret, player = self.win(2)
-        if ret == True:
-            print"Congratulations, player 2 has won!!"
-            return 10
+    def min_max(self, board, depth, isMax):
 
-        #If this is Maximizer move
+        # Check which player has won and return score accordingly
+        score = self.evaluate(board)
+        if score == 10 or score == -10 or score == 0:
+            return score
+
+        # If this is Maximizer move
         if(isMax):
             best = -1000
 
-            #Traverse all the cells
+            # Traverse all the cells
             for i in range(0, 3, 1):
                 for j in range(0, 3, 1):
-                    if self.board[i][j] == '_':
+                    if board[i][j] == '_':
 
-                        #make the move
-                        self.board[i][j] = 'X'
+                        # make the move
+                        board[i][j] = 'X'
 
-                        #Call min_max recursively and find out the maximun value
-                        best = max(best, self.min_max(depth + 1, not(isMax)))
+                        # Call min_max recursively and find out the maximun value
+                        best = max(best, self.min_max(copy.deepcopy(board), depth + 1, not(isMax)))
 
-                        #Undo the move
-                        self.board[i][j] = '_'
+                        # Undo the move
+                        board[i][j] = '_'
             return best
         else:
             best = 1000
@@ -150,34 +180,34 @@ class TicTacToeController(Controller):
             # Traverse all the cells
             for i in range(0, 3, 1):
                 for j in range(0, 3, 1):
-                    if self.board[i][j] == '_':
+                    if board[i][j] == '_':
                         # make the move
-                        self.board[i][j] = 'O'
+                        board[i][j] = 'O'
 
                         # Call min_max recursively and find out the minimum value
-                        best = min(best, self.min_max(depth + 1, not (isMax)))
+                        best = min(best, self.min_max(copy.deepcopy(board), depth + 1, not (isMax)))
 
                         # Undo the move
-                        self.board[i][j] = '_'
+                        board[i][j] = '_'
             return best
 
-    def find_best_move(self):
+    def find_best_move(self, board):
         best_val = -1000
         best_row = -1
         best_col = -1
 
         for i in range(0, 3):
             for j in range(0, 3):
-                if self.board[i][j] == '_':
+                if board[i][j] == '_':
 
-                    #Make the move
-                    self.board[i][j] = 'X'
-                    move_val = self.min_max(0, False)
+                    # Make the move
+                    board[i][j] = 'X'
+                    move_val = self.min_max(copy.deepcopy(board), 0, False)
 
-                    #Undo the move
-                    self.board[i][j] = '_'
+                    # Undo the move
+                    board[i][j] = '_'
 
-                    #if value of current move > best_value, update
+                    # if value of current move > best_value, update
                     if move_val > best_val:
                         best_val = move_val
                         best_row = i
@@ -208,11 +238,9 @@ class TicTacToeController(Controller):
         # check for diagonals
         if self.board[1][1] != '_':
             if self.board[0][0] == self.board[1][1] and self.board[1][1] == self.board[2][2]:
-                print "Congratulations! player " + str(player) + " has won the match!"
-                return True,player
+                return True, player
             if self.board[0][2] == self.board[1][1] and self.board[1][1] == self.board[2][0]:
-                print "Congratulations! player " + str(player) + " has won the match!"
-                return True,player
+                return True, player
 
         return -1, None
 
@@ -225,7 +253,7 @@ class TicTacToeController(Controller):
             self.display_board()
             self.print_space()
             if players[flg-1] == "--JARVIS--":
-                m, n = self.find_best_move()
+                m, n = self.find_best_move(copy.deepcopy(self.board))
             else:
                 print "Enter move for player " + str(players[flg-1]) + "row and column"
                 m = int(raw_input("row:"))
@@ -234,7 +262,7 @@ class TicTacToeController(Controller):
             if m < 0 or m > 3:
                 print "Invalid Move!"
                 continue
-            if n < 0 or n > 3:
+            if n < 0 or n > 3   :
                 print "Invalid Move!"
                 continue
             if self.board[m][n] != '_':
