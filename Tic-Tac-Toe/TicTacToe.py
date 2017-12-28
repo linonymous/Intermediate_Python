@@ -15,6 +15,8 @@ class TicTacToeController(Controller):
         self.logging.info("TicTacToe controller initiated")
         self.matrix = []
         self.board = []
+        self.alpha = -9999999999
+        self.beta = 9999999999
         for i in range(3):
             a = []
             for i in range(3):
@@ -159,7 +161,13 @@ class TicTacToeController(Controller):
 
         # Check which player has won and return score accordingly
         score = self.evaluate(board)
-        if score == 10 or score == -10 or score == 0:
+        if score == 10:
+            return score - depth
+
+        if score == -10:
+            return score + depth
+
+        if score == 0:
             return score
 
         # If this is Maximizer move
@@ -179,6 +187,10 @@ class TicTacToeController(Controller):
 
                         # Undo the move
                         board[i][j] = '_'
+                        self.alpha = max(best, self.alpha)
+
+                        if self.alpha >= self.beta:
+                            break
             return best
         else:
             best = 1000
@@ -195,6 +207,11 @@ class TicTacToeController(Controller):
 
                         # Undo the move
                         board[i][j] = '_'
+
+                        self.beta = min(best, self.beta)
+
+                        if self.alpha >= self.beta:
+                            break
             return best
 
     def find_best_move(self, board):
