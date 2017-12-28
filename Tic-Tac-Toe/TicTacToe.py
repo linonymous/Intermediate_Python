@@ -190,38 +190,30 @@ class TicTacToeController(Controller):
             ch = 'X'
         else:
             ch = 'O'
+        # check for rows
         for i in self.board:
-            s = set(i)
-            if '_' in s:
-                break
-            if len(s) == 1 and ch in s:
-                print "Congratulations! player " + str(player) + " has won the match!"
-                return True,player
-
+            if '_' not in i:
+                s = set(i)
+                if len(s) == 1 and ch in s:
+                    return True, player
+        # check for columns
         for i in range(3):
+            a = []
             for j in range(3):
-                tmp = self.board[i][j]
-                self.board[i][j] = self.board[j][i]
-                self.board[j][i] = tmp
-        for i in self.board:
-            s = set(i)
-            if '_' in s:
-                break
-            if len(s) == 1 and ch in s:
-                print "Congratulations! player " + str(player) + " has won the match!"
-                return True,player
-        if self.board[2][2] != '_':
-            if self.board[0][1] == self.board[1][1] and self.board[1][1] == self.board[2][2]:
+                a.append(self.board[j][i])
+            if '_' not in a:
+                s = set(a)
+                if len(s) == 1 and ch in s:
+                    return True, player
+        # check for diagonals
+        if self.board[1][1] != '_':
+            if self.board[0][0] == self.board[1][1] and self.board[1][1] == self.board[2][2]:
                 print "Congratulations! player " + str(player) + " has won the match!"
                 return True,player
             if self.board[0][2] == self.board[1][1] and self.board[1][1] == self.board[2][0]:
                 print "Congratulations! player " + str(player) + " has won the match!"
                 return True,player
-        for i in range(3):
-            for j in range(3):
-                tmp = self.board[i][j]
-                self.board[i][j] = self.board[j][i]
-                self.board[j][i] = tmp
+
         return -1, None
 
     def _play_bot(self):
@@ -258,8 +250,6 @@ class TicTacToeController(Controller):
                 flg = 2
             else:
                 flg = 1
-            print("here.....")
-            self.display_board()
             if ret is True:
                 print " Congratulations! Player " + str(player) + " have won the match!"
                 break
