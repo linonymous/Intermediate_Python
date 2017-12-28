@@ -110,7 +110,7 @@ class TicTacToeController(Controller):
             return -2
 
     def evaluate(self, board):
-        flg = 0
+
         # check for rows
         for i in board:
             if '_' not in i:
@@ -119,10 +119,6 @@ class TicTacToeController(Controller):
                     return 10
                 elif len(s) == 1 and 'O' in s:
                     return -10
-            else:
-                flg = 1
-        if flg == 0:
-            return 0
         # check for columns
         for i in range(3):
             a = []
@@ -148,6 +144,12 @@ class TicTacToeController(Controller):
                     return 10
                 else:
                     return -10
+        flg = 0
+        for i in board:
+            if '_' in i:
+                flg = 1
+        if flg == 0:
+            return 0
 
     def min_max(self, board, depth, isMax):
 
@@ -241,7 +243,12 @@ class TicTacToeController(Controller):
                 return True, player
             if self.board[0][2] == self.board[1][1] and self.board[1][1] == self.board[2][0]:
                 return True, player
-
+        flg = 1
+        for i in self.board:
+            if '_' in i:
+                flg = 0
+        if flg == 1:
+            return False, "draw"
         return -1, None
 
     def _play_bot(self):
@@ -253,16 +260,17 @@ class TicTacToeController(Controller):
             self.display_board()
             self.print_space()
             if players[flg-1] == "--JARVIS--":
+                print "Let JARVIS play...."
                 m, n = self.find_best_move(copy.deepcopy(self.board))
             else:
                 print "Enter move for player " + str(players[flg-1]) + "row and column"
                 m = int(raw_input("row:"))
                 n = int(raw_input("col:"))
-            print "Next Move " + str(m) + " " + str(n)
+            print str(m) + " " + str(n)
             if m < 0 or m > 3:
                 print "Invalid Move!"
                 continue
-            if n < 0 or n > 3   :
+            if n < 0 or n > 3:
                 print "Invalid Move!"
                 continue
             if self.board[m][n] != '_':
@@ -280,6 +288,9 @@ class TicTacToeController(Controller):
                 flg = 1
             if ret is True:
                 print " Congratulations! Player " + str(player) + " have won the match!"
+                break
+            if ret is False and player == "draw":
+                print "Match has been drawn!"
                 break
 
     def _play(self):
