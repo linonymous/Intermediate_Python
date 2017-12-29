@@ -9,3 +9,7 @@ Single player mode allows player to play against JARVIS bot developed with minma
 
 #### How to play?
 Run TicTacToe.py and follow the instructions.
+
+#### Contributors
+- @MaheshBhosale
+- @linonymous
