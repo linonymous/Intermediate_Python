@@ -1,3 +1,11 @@
 #### Tic Tac Toe Game
 
-Run TicTacToe.py it is the the controller of the game.
+
+###### Modes-
+- Single player
+- Double player
+
+Single player mode allows player to play against JARVIS bot developed with minmax. Double player allows two players to play the game.
+
+###### How to play?
+Run TicTacToe.py and follow the instructions.
